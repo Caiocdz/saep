@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos do SAEP</title>
+  </head>
+  <body bgcolor="#ffff00" text="#000000">
+    <table width="100%" cellpadding="10" cellspacing="0">
+      <tr>
+        <td valign="top" width="70%">
+          <h1>LOJA DO SAEP</h1>
+          <p><button id="statusBtn">status da api</button> <button id="carregarBtn">carregar tudo</button></p>
+          <div id="statusMessage"></div>
+
+          <h2>CADASTRAR</h2>
+          <form id="createForm">
+            Nome:<br>
+            <input type="text" id="nome" /><br><br>
+            Preço:<br>
+            <input type="number" id="preco" step="0.01" /><br><br>
+            <button type="submit">salvar</button>
+          </form>
+
+          <h2>ATUALIZAR</h2>
+          <form id="updateForm">
+            ID:<br>
+            <input type="number" id="idUpdate" /><br><br>
+            Nome:<br>
+            <input type="text" id="nomeUpdate" /><br><br>
+            Preço:<br>
+            <input type="number" id="precoUpdate" step="0.01" /><br><br>
+            <button type="submit">atualizar</button>
+          </form>
+
+          <h2>EXCLUIR</h2>
+          <form id="deleteForm">
+            ID:<br>
+            <input type="number" id="idDelete" /><br><br>
+            <button type="submit">apagar</button>
+          </form>
+
+          <h2>LISTA</h2>
+          <table border="2" bgcolor="#ffffff">
+            <tr>
+              <th>ID</th>
+              <th>NOME</th>
+              <th>PREÇO</th>
+            </tr>
+            <tbody id="produtosBody"></tbody>
+          </table>
+
+          <h2>RESPOSTA</h2>
+          <pre id="responseBox" bgcolor="#000000" text="#ffffff">{}</pre>
+        </td>
+        <td valign="top" width="30%">
+          <div style="padding-top: 20px; text-align: center;">
+            <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=500&q=80" alt="imagem lateral" width="260" style="border: 3px solid #000; background: #fff;" />
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <script>
+      const statusMessage = document.getElementById('statusMessage');
+      const responseBox = document.getElementById('responseBox');
+      const produtosBody = document.getElementById('produtosBody');
+
+      function setStatus(message, type = 'success') {
+        statusMessage.textContent = message;
+        statusMessage.style.color = type === 'success' ? 'green' : 'red';
+      }
+
+      function showResponse(data) {
+        responseBox.textContent = JSON.stringify(data, null, 2);
+      }
+
+      async function getStatus() {
+        try {
+          const response = await fetch('/api/status');
+          const data = await response.json();
+          showResponse(data);
+          setStatus('API funcionando!', 'success');
+        } catch (error) {
+          showResponse({ erro: error.message });
+          setStatus('nao funcionou', 'error');
+        }
+      }
+
+      async function carregarProdutos() {
+        try {
+          const response = await fetch('/produtos');
+          const data = await response.json();
+          showResponse(data);
+
+          if (!Array.isArray(data)) {
+            setStatus('resposta estranha', 'error');
+            return;
+          }
+
+          produtosBody.innerHTML = data.map((produto) => `
+            <tr>
+              <td>${produto.id}</td>
+              <td>${produto.nome}</td>
+              <td>R$ ${Number(produto.preco).toFixed(2)}</td>
+            </tr>
+          `).join('');
+
+          setStatus('produtos carregados', 'success');
+        } catch (error) {
+          showResponse({ erro: error.message });
+          setStatus('erro ao carregar', 'error');
+        }
+      }
+
+      document.getElementById('statusBtn').addEventListener('click', getStatus);
+      document.getElementById('carregarBtn').addEventListener('click', carregarProdutos);
+
+      document.getElementById('createForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const nome = document.getElementById('nome').value;
+        const preco = Number(document.getElementById('preco').value);
+
+        try {
+          const response = await fetch('/produtos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, preco })
+          });
+          const data = await response.json();
+          showResponse(data);
+          if (response.ok) {
+            setStatus('produto salvo', 'success');
+            document.getElementById('createForm').reset();
+            carregarProdutos();
+          } else {
+            setStatus(data.erro || 'deu ruim', 'error');
+          }
+        } catch (error) {
+          showResponse({ erro: error.message });
+          setStatus('nao deu pra salvar', 'error');
+        }
+      });
+
+      document.getElementById('updateForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const id = document.getElementById('idUpdate').value;
+        const nome = document.getElementById('nomeUpdate').value;
+        const preco = Number(document.getElementById('precoUpdate').value);
+
+        try {
+          const response = await fetch(`/produtos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, preco })
+          });
+          const data = await response.json();
+          showResponse(data);
+          if (response.ok) {
+            setStatus('produto atualizado', 'success');
+            document.getElementById('updateForm').reset();
+            carregarProdutos();
+          } else {
+            setStatus(data.erro || 'erro no update', 'error');
+          }
+        } catch (error) {
+          showResponse({ erro: error.message });
+          setStatus('update falhou', 'error');
+        }
+      });
+
+      document.getElementById('deleteForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const id = document.getElementById('idDelete').value;
+
+        try {
+          const response = await fetch(`/produtos/${id}`, { method: 'DELETE' });
+          const data = await response.json();
+          showResponse(data);
+          if (response.ok) {
+            setStatus('produto apagado', 'success');
+            document.getElementById('deleteForm').reset();
+            carregarProdutos();
+          } else {
+            setStatus(data.erro || 'erro ao apagar', 'error');
+          }
+        } catch (error) {
+          showResponse({ erro: error.message });
+          setStatus('deu ruim ao apagar', 'error');
+        }
+      });
+
+      carregarProdutos();
+    </script>
+  </body>
+</html>
