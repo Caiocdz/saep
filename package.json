@@ -1,0 +1,25 @@
+{
+  "name": "saep",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@netlify/database": "^2.0.1",
+    "@netlify/functions": "^6.0.2",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^1.0.0-beta.22",
+    "express": "^5.3.0",
+    "http": "^0.0.1-security",
+    "mysql2": "^3.24.6",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^1.0.0-beta.22"
+  }
+}

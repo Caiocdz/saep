@@ -1,0 +1,66 @@
+{
+  "version": "8",
+  "dialect": "postgres",
+  "id": "fe2be270-da4d-4686-b20d-aa6edab3cf7a",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "isRlsEnabled": false,
+      "name": "produtos",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "type": "serial",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "produtos"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "nome",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "produtos"
+    },
+    {
+      "type": "numeric(10,2)",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "preco",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "produtos"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "produtos_pkey",
+      "schema": "public",
+      "table": "produtos",
+      "entityType": "pks"
+    }
+  ],
+  "renames": []
+}
