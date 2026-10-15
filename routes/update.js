@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../db');
+const pool = require('../banco');
 
 router.put('/produtos/:id', (req, res) => {
     const { id } = req.params;

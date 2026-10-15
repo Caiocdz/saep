@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../db');
+const pool = require('../banco');
 
 router.get('/produtos', (req, res) => {
     connection.query('SELECT * FROM produtos', (erro, resultados) => {
