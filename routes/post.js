@@ -1,8 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const connection = require('../db');
-const pool = require('../banco');
+const pool = require('../db');
 
 router.post('/produtos', (req, res) => {
     const { nome, preco } = req.body || {};
@@ -13,7 +12,7 @@ router.post('/produtos', (req, res) => {
         return res.status(400).json({ erro: 'Informe nome e preço' });
     }
 
-    connection.execute(
+    pool.execute(
         'INSERT INTO produtos (nome, preco) VALUES (?, ?)',
         [nome, preco],
         (erro, resultado) => {

@@ -1,4 +1,4 @@
-// app carrega db.js, que le o .env antes de consultar PORT.
+// db.js carrega o .env local antes de consultar PORT.
 const app = require('./app');
 const pool = require('./db');
 
@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 pool.getConnection((erro, connection) => {
     if (erro) {
-        console.error('Nao foi possivel conectar ao MySQL. Confira as variaveis DB_* e a rede.');
+        console.error('Nao foi possivel conectar ao MySQL:', erro.code || erro.message);
         pool.end();
         process.exitCode = 1;
         return;

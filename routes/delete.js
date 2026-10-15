@@ -1,8 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const connection = require('../db');
-const pool = require('../banco');
+const pool = require('../db');
 
 router.delete('/produtos/:id', (req, res) => {
     const { id } = req.params;
@@ -11,7 +10,7 @@ router.delete('/produtos/:id', (req, res) => {
         return res.status(400).json({ erro: 'ID invalido' });
     }
 
-    connection.execute(
+    pool.execute(
         'DELETE FROM produtos WHERE id = ?',
         [id],
         (erro, resultado) => {

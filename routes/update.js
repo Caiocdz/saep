@@ -1,8 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const connection = require('../db');
-const pool = require('../banco');
+const pool = require('../db');
 
 router.put('/produtos/:id', (req, res) => {
     const { id } = req.params;
@@ -18,7 +17,7 @@ router.put('/produtos/:id', (req, res) => {
         return res.status(400).json({ erro: 'Informe nome e preço' });
     }
 
-    connection.execute(
+    pool.execute(
         'UPDATE produtos SET nome = ?, preco = ? WHERE id = ?',
         [nome, preco, id],
         (erro, resultado) => {
