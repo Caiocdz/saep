@@ -26,4 +26,16 @@ app.use(post);
 app.use(update);
 app.use(deletar);
 
+app.use((erro, req, res, next) => {
+    if (res.headersSent) return next(erro);
+    if (erro.type === 'entity.parse.failed') {
+        return res.status(400).json({ erro: 'JSON invalido' });
+    }
+    if (erro.type === 'entity.too.large') {
+        return res.status(413).json({ erro: 'Corpo da requisicao muito grande' });
+    }
+    console.error('Erro ao processar requisicao.');
+    return res.status(500).json({ erro: 'Erro interno do servidor' });
+});
+
 module.exports = app;

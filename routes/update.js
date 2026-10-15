@@ -5,18 +5,25 @@ const connection = require('../db');
 
 router.put('/produtos/:id', (req, res) => {
     const { id } = req.params;
-    const { nome, preco } = req.body;
 
-    if (!nome || preco == null) {
+    if (!/^[1-9]\d*$/.test(id)) {
+        return res.status(400).json({ erro: 'ID invalido' });
+    }
+    const { nome, preco } = req.body || {};
+
+    if (typeof nome !== 'string' || !nome.trim() ||
+        !['number', 'string'].includes(typeof preco) ||
+        String(preco).trim() === '' || !Number.isFinite(Number(preco))) {
         return res.status(400).json({ erro: 'Informe nome e preço' });
     }
 
-    connection.query(
+    connection.execute(
         'UPDATE produtos SET nome = ?, preco = ? WHERE id = ?',
         [nome, preco, id],
         (erro, resultado) => {
             if (erro) {
-                return res.status(500).json({ erro: erro.message });
+                console.error('Falha ao atualizar produto no MySQL.');
+                return res.status(500).json({ erro: 'Erro ao atualizar produto' });
             }
 
             if (resultado.affectedRows === 0) {

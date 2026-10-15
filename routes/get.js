@@ -6,7 +6,8 @@ const connection = require('../db');
 router.get('/produtos', (req, res) => {
     connection.query('SELECT * FROM produtos', (erro, resultados) => {
         if (erro) {
-            return res.status(500).json({ erro: erro.message });
+            console.error('Falha ao listar produtos no MySQL.');
+            return res.status(500).json({ erro: 'Erro ao listar produtos' });
         }
 
         res.json(resultados);

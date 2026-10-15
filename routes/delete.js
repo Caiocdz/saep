@@ -6,12 +6,17 @@ const connection = require('../db');
 router.delete('/produtos/:id', (req, res) => {
     const { id } = req.params;
 
-    connection.query(
+    if (!/^[1-9]\d*$/.test(id)) {
+        return res.status(400).json({ erro: 'ID invalido' });
+    }
+
+    connection.execute(
         'DELETE FROM produtos WHERE id = ?',
         [id],
         (erro, resultado) => {
             if (erro) {
-                return res.status(500).json({ erro: erro.message });
+                console.error('Falha ao excluir produto no MySQL.');
+                return res.status(500).json({ erro: 'Erro ao excluir produto' });
             }
 
             if (resultado.affectedRows === 0) {
